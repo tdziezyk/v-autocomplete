@@ -2,7 +2,7 @@
 div(style="text-align: center;")
   h2 Type some animal name to search
 
-  v-autocomplete(:items="items" v-model='item', :get-label='getLabel', :min-len='0' @update-items='update', :component-item='tpl', @item-selected="itemSelected", @item-clicked="itemClicked", :input-attrs="{name: 'input-test', id: 'v-my-autocomplete'}")
+  v-autocomplete(:items="items" v-model='item', :get-label='getLabel', :min-len='0' @update-items='update', :component-item='tpl', @item-selected="itemSelected", @item-clicked="itemClicked", :enterKey='enterKey', :input-attrs="{name: 'input-test', id: 'v-my-autocomplete'}")
   p Selected item:
   pre {{ item }}
 
@@ -38,12 +38,20 @@ export default {
       console.log('You clicked an item!', item)
     },
     getLabel (item) {
-      return item.name
+      if (item) {
+        return item.name
+      }
+
+      return '';
     },
     update (text) {
       this.items = Animals.filter((item) => {
         return (new RegExp(text.toLowerCase())).test(item.name.toLowerCase())
       })
+    },
+    enterKey (item, searchInput) {
+      console.log('Selected item!', item);
+      console.log('Search input!', searchInput);
     }
   }
 }

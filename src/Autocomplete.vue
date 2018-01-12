@@ -39,14 +39,19 @@ export default {
     inputClass: {type: String, default: 'v-autocomplete-input'},
     disabled: {type: Boolean, default: false},
     inputAttrs: {type: Object, default: () => {return {}}},
-    keepOpen: {type: Boolean, default: false}
+    keepOpen: {type: Boolean, default: false},
+    enterKey: {
+      type: Function,
+      default: () => {}
+    }
   },
   data () {
     return {
       searchText: '',
       showList: false,
       cursor: -1,
-      internalItems: this.items || []
+      internalItems: this.items || [],
+      selectedItem: null
     }
   },
   computed: {
@@ -86,10 +91,12 @@ export default {
 
     onSelectItem (item) {
       if (item) {
+        this.selectedItem = item
         this.internalItems = [item]
         this.searchText = this.getLabel(item)
         this.$emit('item-selected', item)
       } else {
+        this.selectedItem = null
         this.setItems(this.items)
       }
       this.$emit('input', item)
@@ -128,6 +135,8 @@ export default {
         this.onSelectItem(this.internalItems[this.cursor])
         this.showList = false
       }
+
+      this.enterKey(this.selectedItem, this.searchText)
     },
 
   },
